@@ -3,13 +3,15 @@ var sync = require('synchronize');
 var request = require('request');
 var _ = require('underscore');
 
+request.debug = true;
+
 
 // The Type Ahead API.
 module.exports = function(req, res) {
-  var term = req.query.text.trim();
+  var term = req.query.text;
   if (!term) {
     res.json([{
-      title: '<i>(enter a search term)</i>',
+      title: '<i>(enter a place\'s name)</i>',
       text: ''
     }]);
     return;
@@ -18,41 +20,45 @@ module.exports = function(req, res) {
   var response;
   try {
     response = sync.await(request({
-      url: 'http://api.giphy.com/v1/gifs/search',
+      method: 'GET',
+      url: 'https://maps.googleapis.com/maps/api/place/textsearch/json',
       qs: {
-        q: term,
-        limit: 15,
-        api_key: key
+        query: term,
+        key: key
       },
       gzip: true,
       json: true,
       timeout: 10 * 1000
     }, sync.defer()));
   } catch (e) {
-    res.status(500).send('Error');
+    console.log(response);
+    // res.status(500).send('Error');
+    res.json(e);
     return;
   }
 
-  if (response.statusCode !== 200 || !response.body || !response.body.data) {
-    res.status(500).send('Error');
-    return;
-  }
+  // if (response.statusCode !== 200 || !response.body || !response.body.data) {
+  //   res.status(500).send('Error');
+  //   return;
+  // }
 
-  var results = _.chain(response.body.data)
-    .reject(function(image) {
-      return !image || !image.images || !image.images.fixed_height_small;
+  console.log(response.body);
+
+  var results = _.chain(response.body.results)
+    .reject(function(place) {
+      return !place || !place.name || !place.formatted_address;
     })
-    .map(function(image) {
+    .map(function(place) {
       return {
-        title: '<img style="height:75px" src="' + image.images.fixed_height_small.url + '">',
-        text: 'http://giphy.com/' + image.id
+        title: '<div style="height:75px; border: 1px solid red;">' + place.formatted_address + '</div>',
+        text: place.name
       };
     })
     .value();
 
   if (results.length === 0) {
     res.json([{
-      title: '<i>(no results)</i>',
+      title: '<i>(no places)</i>',
       text: ''
     }]);
   } else {

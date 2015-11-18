@@ -8,6 +8,8 @@ var _ = require('underscore');
 module.exports = function(req, res) {
   var term = req.query.text.trim();
 
+  console.log('been here');
+
   if (/^http:\/\/giphy\.com\/\S+/.test(term)) {
     // Special-case: handle strings in the special URL form that are suggested by the commandHint
     // API. This is how the command hint menu suggests an exact Giphy image.
@@ -37,7 +39,7 @@ function handleIdString(id, req, res) {
 
   var image = response.body.data.images.original;
   var width = image.width > 600 ? 600 : image.width;
-  var html = '<p><img style="max-width:100%;" src="' + image.url + '" width="' + width + '"/></p>';
+  var html = '<p><img style="max-width:100%; border: 1px solid green;" src="' + image.url + '" width="' + width + '"/></p>';
   res.json({
     body: html
   });
@@ -62,6 +64,7 @@ function handleSearchString(term, req, res) {
   }
 
   var data = response.body.data;
+  console.log(response.body.data);
 
   // Cap at 600px wide
   var width = data.image_width > 600 ? 600 : data.image_width;
