@@ -33,3 +33,13 @@ In order to make this work, you will need a Google API Key. I hope this link is 
 I've used a simple browser key allowed to access the Google Maps API, but be aware that you have a limited amount of requests you can do on the free tier.
 
 Once you have your API key, just paste it in ```./utils/key.js``` and you're done!
+
+## How to add to Mixmax?
+
+Begin by going to your Mixmax settings page, then in Interactions, under Slash Commands add a slash command with the following values:
+
+__Name__ : Places<br>
+__Command__ : places<br>
+__Parameter Placeholder__: [Search]<br>
+__Command Parameter Suggestions API URL__ : http://localhost:9145/typeahead<br>
+__Command Parameter Resolver API URL__ : http://localhost:9145/resolver<br>
