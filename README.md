@@ -25,3 +25,9 @@ curl http://localhost:9145/resolver?text=<place name>
 During the typeahead phase, all requests are made to the Google Places API Text Search Service to fetch general details fitting your query. 
 
 Once you select one of the places, it ends up passing to the resolver a ```place_id```. This property is used to call the Google Places API Place Details Service and actually get more details about the specific place you selected. 
+
+## Setup
+
+In order to make this work, you will need a Google API Key. I hope this link is still working when you're planning to get your own keys: https://console.developers.google.com/apis
+
+I've used a simple browser key allowed to access the Google Maps API, but be aware that you have a limited amount of requests you can do on the free tier.
