@@ -31,3 +31,5 @@ Once you select one of the places, it ends up passing to the resolver a ```place
 In order to make this work, you will need a Google API Key. I hope this link is still working when you're planning to get your own keys: https://console.developers.google.com/apis
 
 I've used a simple browser key allowed to access the Google Maps API, but be aware that you have a limited amount of requests you can do on the free tier.
+
+Once you have your API key, just paste it in ```./utils/key.js``` and you're done!
