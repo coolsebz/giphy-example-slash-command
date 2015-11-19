@@ -9,6 +9,7 @@ module.exports = function(req, res) {
   var term = req.query.text.trim();
 
   console.log('been here');
+  console.log(req.query.text);
 
   if (/^http:\/\/giphy\.com\/\S+/.test(term)) {
     // Special-case: handle strings in the special URL form that are suggested by the commandHint
@@ -20,39 +21,19 @@ module.exports = function(req, res) {
   }
 };
 
+// todo(seb): need to build a way to parse out links
 function handleIdString(id, req, res) {
-  var response;
-  try {
-    response = sync.await(request({
-      url: 'http://api.giphy.com/v1/gifs/' + encodeURIComponent(id),
-      qs: {
-        api_key: key
-      },
-      gzip: true,
-      json: true,
-      timeout: 15 * 1000
-    }, sync.defer()));
-  } catch (e) {
-    res.status(500).send('Error');
-    return;
-  }
-
-  var image = response.body.data.images.original;
-  var width = image.width > 600 ? 600 : image.width;
-  var html = '<p><img style="max-width:100%; border: 1px solid green;" src="' + image.url + '" width="' + width + '"/></p>';
-  res.json({
-    body: html
-  });
+  return;
 }
 
 function handleSearchString(term, req, res) {
   var response;
   try {
     response = sync.await(request({
-      url: 'http://api.giphy.com/v1/gifs/random',
+      url: 'https://maps.googleapis.com/maps/api/place/details/json',
       qs: {
-        tag: term,
-        api_key: key
+        placeid: term,
+        key: key
       },
       gzip: true,
       json: true,
@@ -63,12 +44,9 @@ function handleSearchString(term, req, res) {
     return;
   }
 
-  var data = response.body.data;
-  console.log(response.body.data);
-
   // Cap at 600px wide
-  var width = data.image_width > 600 ? 600 : data.image_width;
-  var html = '<p><img style="max-width:100%;" src="' + data.image_url + '" width="' + width + '"/></p>';
+  // todo(seb): extract this into its own template
+  var html = '<div><p>' + response.body.result.name + '</div></p>';
   res.json({
     body: html
   });

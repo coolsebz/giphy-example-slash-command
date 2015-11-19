@@ -3,9 +3,6 @@ var sync = require('synchronize');
 var request = require('request');
 var _ = require('underscore');
 
-request.debug = true;
-
-
 // The Type Ahead API.
 module.exports = function(req, res) {
   var term = req.query.text;
@@ -31,16 +28,14 @@ module.exports = function(req, res) {
       timeout: 10 * 1000
     }, sync.defer()));
   } catch (e) {
-    console.log(response);
-    // res.status(500).send('Error');
-    res.json(e);
+    res.status(500).send('Error');
     return;
   }
 
-  // if (response.statusCode !== 200 || !response.body || !response.body.data) {
-  //   res.status(500).send('Error');
-  //   return;
-  // }
+  if (response.statusCode !== 200 || !response.body || !response.body.results) {
+    res.status(500).send('Error');
+    return;
+  }
 
   console.log(response.body);
 
@@ -50,8 +45,8 @@ module.exports = function(req, res) {
     })
     .map(function(place) {
       return {
-        title: '<div style="height:75px; border: 1px solid red;">' + place.formatted_address + '</div>',
-        text: place.name
+        title: '<div style="height:75px;">' + place.formatted_address + '</div>',
+        text: place.place_id
       };
     })
     .value();
