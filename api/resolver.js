@@ -8,13 +8,9 @@ var _ = require('underscore');
 module.exports = function(req, res) {
   var term = req.query.text.trim();
 
-  console.log('been here');
-  console.log(req.query.text);
-
-  if (/^http:\/\/giphy\.com\/\S+/.test(term)) {
-    // Special-case: handle strings in the special URL form that are suggested by the commandHint
-    // API. This is how the command hint menu suggests an exact Giphy image.
-    handleIdString(term.replace(/^http:\/\/giphy\.com\//, ''), req, res);
+  // note(seb): evolve this to pick up links too
+  if (/^http:\/\/maps\.google\.com\/\S+/.test(term)) {
+    handleIdString(term.replace(/^http:\/\/maps\.google\.com\//, ''), req, res);
   } else {
     // Else, assume it was a search string.
     handleSearchString(term, req, res);
@@ -44,9 +40,12 @@ function handleSearchString(term, req, res) {
     return;
   }
 
-  // Cap at 600px wide
   // todo(seb): extract this into its own template
-  var html = '<div><p>' + response.body.result.name + '</div></p>';
+  // todo(seb): extract open hours
+  var html = '<div><h1 style="font-size: 34px">' + response.body.result.name + '</h1>' +
+             '</h2>' + response.body.result.formatted_address + '</h2>' +
+             '<p> Rating: <span style="font-color: #6DC995;">' + response.body.result.rating + '</span></p>' + 
+             '</div>';
   res.json({
     body: html
   });
